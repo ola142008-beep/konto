@@ -141,14 +141,29 @@ function groszeToStr(grosze){
 
 const transactions = [
   { daysAgo: 1, desc: "Militaria", site: "militaria.pl", amountG: zlToGrosze(-847.99) },
-  { date: "08.10.2025", desc: "Wpłata we wpłatomacie (kod BLIK BSND)", site: "wplatomat", amountG: zlToGrosze(5200.00) },
-  { date: "01.09.2025", desc: "Przelew wewnętrzny — przychodzący", site: "Twoje konto", amountG: zlToGrosze(2300.00) }
+  { date: "04.05.2025", desc: "Jeulia JEWELLERY LIMITED", site: "jeulia.com", amountG: zlToGrosze(-640.00) },
+  { date: "12.04.2025", desc: "Sklep Odzieżowy", site: "greenpoint.pl", amountG: zlToGrosze(-259.99) },
+  { date: "19.03.2025", desc: "Buty - Sklep Obuwniczy", site: "jdsports.pl", amountG: zlToGrosze(-499.00) },
+  { date: "12.03.2025", desc: "Sklep Elektroniczny", site: "euro.com", amountG: zlToGrosze(-720.50) },
+  { date: "14.08.2024", desc: "DINO BORZECHOW 1 K.1", site: "brak", amountG: zlToGrosze(-189.25) },
+  { date: "27.12.2024", desc: "OLX", site: "olx.pl", amountG: zlToGrosze(-450.00) },
+  { date: "21.05.2025", desc: "ORLEN STACJA NR.432", site: "blik", amountG: zlToGrosze(-243.00) },
+  { date: "11.12.2024", desc: "ISPOT", site: "ispot.pl", amountG: zlToGrosze(-890.99) },
 ];
 
 // ➕ nowa wpłata
-const newDeposit = { date: new Date().toLocaleDateString('pl-PL'), desc: "Wynagrodzenie — listopad 2025", site: "firma.pl", amountG: zlToGrosze(2300.00) };
+const newDeposit = { date: new Date().toLocaleDateString('pl-PL'), desc: "Przelew wewnetrzny — listopad 2025", site: "zlecenie", amountG: zlToGrosze(2100.00) };
+transactions.unshift(newDeposit);
+  const newDeposit = { date: new Date().toLocaleDateString('pl-PL'), desc: "Wplata — pazdziernik 2025", site: "zlecenie", amountG: zlToGrosze(5200.00) };
+transactions.unshift(newDeposit);
+const newDeposit = { date: new Date().toLocaleDateString('pl-PL'), desc: "Wplata — pazdziernik 2025", site: "zlecenie", amountG: zlToGrosze(5000.00) };
+transactions.unshift(newDeposit);
+   const newDeposit = { date: new Date().toLocaleDateString('pl-PL'), desc: "Przelew wewnetrzny — wrzesnien 2025", site: "zlecenie", amountG: zlToGrosze(2300.00) };
+transactions.unshift(newDeposit);
+  const newDeposit = { date: new Date().toLocaleDateString('pl-PL'), desc: "Przelew wewnetrzny — styczen 2024", site: "zlecenie", amountG: zlToGrosze(7600.00) };
 transactions.unshift(newDeposit);
 
+  
 document.getElementById('acctName').textContent = name;
 document.getElementById('acctNum').textContent = "Nr konta: " + acctMask;
 document.getElementById('balance').textContent = balanceFixed.toFixed(2).replace(',', '.') + " PLN";
@@ -185,3 +200,4 @@ showToast(`Nowa wpłata: +${groszeToStr(newDeposit.amountG)} (${newDeposit.desc}
 </script>
 </body>
 </html>
+
