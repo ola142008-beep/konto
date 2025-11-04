@@ -1,129 +1,3 @@
-<!doctype html>
-<html lang="pl">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Panel konta (Silesia Finansy)</title>
-<style>
-:root {
-  --bg: #0b1220;
-  --card: #0f1724;
-  --accent: #3b82f6;
-  --muted: #9ca3af;
-  --text: #e5e7eb;
-  --danger: #f87171;
-  --success: #34d399;
-  --warn: #f59e0b;
-}
-html,body{
-  height:100%; margin:0; font-family:Inter,Segoe UI,Roboto,system-ui,Arial;
-  background: linear-gradient(-45deg, #082567);
-  animation: gradient 15s ease infinite;
-  flex-direction: column;
-  color:var(--text);
-}
-.container{max-width:920px;margin:36px auto;padding:20px;position:relative;z-index:2}
-.badge{display:inline-block;background:#0f1724;color:#fff;padding:6px 10px;border-radius:6px;font-weight:700;margin-bottom:12px;border:1px solid rgba(255,255,255,0.04)}
-.account-card{background:var(--card);border-radius:12px;padding:22px;box-shadow:0 10px 30px rgba(2,6,23,0.6);display:flex;justify-content:space-between;align-items:center;position:relative;z-index:3}
-.left{display:flex;gap:18px;align-items:center}
-.avatar{width:72px;height:72px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;box-shadow:0 8px 22px rgba(59,130,246,0.18)}
-.avatar svg{width:44px;height:44px;fill:#fff}
-.info{line-height:1}
-.info .name{font-weight:700;font-size:18px;color:var(--text)}
-.info .acct{font-size:13px;color:var(--muted);margin-top:4px}
-.balance{text-align:right}
-.balance .label{font-size:13px;color:var(--muted)}
-.balance .amount{font-weight:800;font-size:28px;margin-top:6px;color:var(--text)}
-.transactions{margin-top:18px;background:linear-gradient(180deg,#0b1220, #0f1724);border-radius:12px;padding:12px;margin-bottom:20px;box-shadow:0 6px 18px rgba(2,6,23,0.5)}
-table{width:100%;border-collapse:collapse}
-th,td{padding:10px 8px;text-align:left;font-size:14px}
-th{color:var(--muted);font-weight:700;font-size:13px}
-tr + tr td{border-top:1px solid rgba(255,255,255,0.03)}
-.merchant{font-weight:700;color:var(--text)}
-.muted{color:var(--muted);font-size:13px}
-.amount-cred{color:var(--success);font-weight:700}
-.amount-deb{color:var(--danger);font-weight:700}
-footer{margin-top:18px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;align-items:center}
-.small{font-size:12px;color:var(--muted)}
-@media (max-width:640px){
-  .account-card{flex-direction:column;align-items:flex-start;gap:12px}
-  .balance{text-align:left}
-}
-a{color:var(--accent); text-decoration:none}
-
-/* powiadomienie (toast) */
-.toast {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: var(--card);
-  color: var(--text);
-  border-left: 4px solid var(--success);
-  padding: 14px 18px;
-  border-radius: 10px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-  opacity: 0;
-  transform: translateY(-10px);
-  animation: slideIn 0.5s forwards;
-  z-index: 9999;
-}
-@keyframes slideIn {
-  to { opacity: 1; transform: translateY(0); }
-}
-</style>
-</head>
-<body>
-  <div class="container">
-    <span class="badge">Silesia Finansy (vip)</span>
-
-    <div class="account-card" role="region" aria-label="Panel konta biznes">
-      <div class="left">
-        <div class="avatar" id="avatar" title="Profil (ikona)">
-          <svg viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="9" opacity="0.12"/>
-            <path d="M12 7c1.657 0 3 .895 3 2s-1.343 2-3 2-3 .895-3 2 1.343 2 3 2" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            <path d="M12 5v2M12 17v2" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="12" cy="12" r="9" fill="none" stroke="#ffffff" opacity="0.08"/>
-          </svg>
-        </div>
-        <div class="info">
-          <div class="name" id="acctName">Aleksandra</div>
-          <div class="acct" id="acctNum">Nr konta: —</div>
-          <div class="small">Typ konta: Oszczędnościowe (VIP)</div>
-        </div>
-      </div>
-
-      <div class="balance">
-        <div class="label">Saldo oszczędnościowe</div>
-        <div class="amount" id="balance">15323.35 PLN</div>
-      </div>
-    </div>
-
-    <div class="transactions" aria-label="Ostatnie transakcje">
-      <table>
-        <thead>
-          <tr><th>Data</th><th>Opis</th><th class="muted">Strona / odbiorca</th><th style="text-align:right">Kwota</th></tr>
-        </thead>
-        <tbody id="txBody"></tbody>
-        <tfoot>
-          <tr>
-            <td></td>
-            <td style="font-weight:700">Suma ostatnich transakcji</td>
-            <td></td>
-            <td style="text-align:right;font-weight:700;color:var(--danger)" id="sumFoot">-0.00 PLN</td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-      <div class="small">Twoje dane są chronione.</div>
-      <div style="font-size:12px;color:var(--muted)">Odświeżono: <span id="createdDate"></span></div>
-    </div>
-  </div>
-
-  <div id="toastContainer"></div>
-
 <script>
 const name = "Aleksandra Florek";
 function randDigits(n){ let s=''; for(let i=0;i<n;i++) s += Math.floor(Math.random()*10); return s; }
@@ -139,6 +13,15 @@ function groszeToStr(grosze){
   return sign + zl.toLocaleString('pl-PL') + '.' + cents + ' PLN';
 }
 
+/* funkcja toast przeniesiona wyżej, żeby działała od razu */
+function showToast(msg){
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.getElementById('toastContainer').appendChild(toast);
+  setTimeout(()=>toast.remove(),4000);
+}
+
 const transactions = [
   { daysAgo: 1, desc: "Militaria", site: "militaria.pl", amountG: zlToGrosze(-847.99) },
   { date: "04.05.2025", desc: "Jeulia JEWELLERY LIMITED", site: "jeulia.com", amountG: zlToGrosze(-640.00) },
@@ -151,8 +34,8 @@ const transactions = [
   { date: "11.12.2024", desc: "ISPOT", site: "ispot.pl", amountG: zlToGrosze(-890.99) },
 ];
 
-// ➕ nowa wpłata
-  const newDeposits = [
+// ➕ nowe wpłaty
+const newDeposits = [
   { desc: "Przelew wewnetrzny — listopad 2025", amount: 2100.00 },
   { desc: "Wplata — pazdziernik 2025", amount: 5200.00 },
   { desc: "Wplata — pazdziernik 2025", amount: 5000.00 },
@@ -174,13 +57,13 @@ newDeposits.forEach(dep => {
 const lastDeposit = newDeposits[0];
 showToast(`Nowa wpłata: +${lastDeposit.amount.toFixed(2)} PLN (${lastDeposit.desc})`);
 
-
-  
+// 🧾 Uzupełnianie danych
 document.getElementById('acctName').textContent = name;
 document.getElementById('acctNum').textContent = "Nr konta: " + acctMask;
 document.getElementById('balance').textContent = balanceFixed.toFixed(2).replace(',', '.') + " PLN";
 document.getElementById('createdDate').textContent = new Date().toLocaleString('pl-PL');
 
+// 🧮 Generowanie tabeli
 const txBody = document.getElementById('txBody');
 let sumG = 0;
 transactions.forEach(tx => {
@@ -189,28 +72,15 @@ transactions.forEach(tx => {
   const amtClass = tx.amountG < 0 ? 'amount-deb' : 'amount-cred';
   const amountText = groszeToStr(tx.amountG);
   const dateStr = tx.date || new Date().toLocaleDateString('pl-PL');
-  const siteHtml = (typeof tx.site === 'string' && tx.site.startsWith('PL-')) ? tx.site : `<a href="https://${tx.site}" target="_blank" rel="noreferrer noopener">${tx.site}</a>`;
-  tr.innerHTML = `<td>${dateStr}</td>
+  const siteHtml = (typeof tx.site === 'string' && tx.site !== "brak") 
+    ? `<a href="https://${tx.site}" target="_blank" rel="noreferrer noopener">${tx.site}</a>` 
+    : "—";
+  tr.innerHTML = `
+    <td>${dateStr}</td>
     <td class="merchant">${tx.desc}</td>
     <td class="muted">${siteHtml}</td>
     <td style="text-align:right"><span class="${amtClass}">${amountText}</span></td>`;
   txBody.appendChild(tr);
 });
 document.getElementById('sumFoot').textContent = groszeToStr(sumG);
-
-/* estetyczne powiadomienie (toast) */
-function showToast(msg){
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.textContent = msg;
-  document.getElementById('toastContainer').appendChild(toast);
-  setTimeout(()=>toast.remove(),4000);
-}
-
-// pokaz toast po nowej wpłacie
-showToast(`Nowa wpłata: +${groszeToStr(newDeposit.amountG)} (${newDeposit.desc})`);
 </script>
-</body>
-</html>
-
-
