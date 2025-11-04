@@ -152,16 +152,28 @@ const transactions = [
 ];
 
 // ➕ nowa wpłata
-const newDeposit = { date: new Date().toLocaleDateString('pl-PL'), desc: "Przelew wewnetrzny — listopad 2025", site: "zlecenie", amountG: zlToGrosze(2100.00) };
-transactions.unshift(newDeposit);
-  const newDeposit = { date: new Date().toLocaleDateString('pl-PL'), desc: "Wplata — pazdziernik 2025", site: "zlecenie", amountG: zlToGrosze(5200.00) };
-transactions.unshift(newDeposit);
-const newDeposit = { date: new Date().toLocaleDateString('pl-PL'), desc: "Wplata — pazdziernik 2025", site: "zlecenie", amountG: zlToGrosze(5000.00) };
-transactions.unshift(newDeposit);
-   const newDeposit = { date: new Date().toLocaleDateString('pl-PL'), desc: "Przelew wewnetrzny — wrzesnien 2025", site: "zlecenie", amountG: zlToGrosze(2300.00) };
-transactions.unshift(newDeposit);
-  const newDeposit = { date: new Date().toLocaleDateString('pl-PL'), desc: "Przelew wewnetrzny — styczen 2024", site: "zlecenie", amountG: zlToGrosze(7600.00) };
-transactions.unshift(newDeposit);
+  const newDeposits = [
+  { desc: "Przelew wewnetrzny — listopad 2025", amount: 2100.00 },
+  { desc: "Wplata — pazdziernik 2025", amount: 5200.00 },
+  { desc: "Wplata — pazdziernik 2025", amount: 5000.00 },
+  { desc: "Przelew wewnetrzny — wrzesnien 2025", amount: 2300.00 },
+  { desc: "Przelew wewnetrzny — styczen 2024", amount: 7600.00 }
+];
+
+newDeposits.forEach(dep => {
+  const tx = {
+    date: new Date().toLocaleDateString('pl-PL'),
+    desc: dep.desc,
+    site: "zlecenie",
+    amountG: zlToGrosze(dep.amount)
+  };
+  transactions.unshift(tx);
+});
+
+// pokaż toast dla najnowszej wpłaty
+const lastDeposit = newDeposits[0];
+showToast(`Nowa wpłata: +${lastDeposit.amount.toFixed(2)} PLN (${lastDeposit.desc})`);
+
 
   
 document.getElementById('acctName').textContent = name;
@@ -200,4 +212,5 @@ showToast(`Nowa wpłata: +${groszeToStr(newDeposit.amountG)} (${newDeposit.desc}
 </script>
 </body>
 </html>
+
 
