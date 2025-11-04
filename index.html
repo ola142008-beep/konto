@@ -1,59 +1,146 @@
-<script>
-function showToast(msg){
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.textContent = msg;
-  document.getElementById("toastContainer").appendChild(toast);
-  setTimeout(()=>toast.remove(),4000);
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Panel konta (Silesia Finansy)</title>
+<style>
+:root {
+  --bg: #0b1220;
+  --card: #0f1724;
+  --accent: #3b82f6;
+  --muted: #9ca3af;
+  --text: #e5e7eb;
+  --danger: #f87171;
+  --success: #34d399;
+  --warn: #f59e0b;
 }
+html,body{
+  height:100%; margin:0; font-family:Inter,Segoe UI,Roboto,system-ui,Arial;
+  background: linear-gradient(-45deg, #082567, #0f1724);
+  animation: gradient 15s ease infinite;
+  flex-direction: column;
+  color:var(--text);
+}
+.container{max-width:920px;margin:36px auto;padding:20px;position:relative;z-index:2}
+.badge{display:inline-block;background:#0f1724;color:#fff;padding:6px 10px;border-radius:6px;font-weight:700;margin-bottom:12px;border:1px solid rgba(255,255,255,0.04)}
+.account-card{background:var(--card);border-radius:12px;padding:22px;box-shadow:0 10px 30px rgba(2,6,23,0.6);display:flex;justify-content:space-between;align-items:center;position:relative;z-index:3}
+.left{display:flex;gap:18px;align-items:center}
+.avatar{width:72px;height:72px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;box-shadow:0 8px 22px rgba(59,130,246,0.18)}
+.avatar svg{width:44px;height:44px;fill:#fff}
+.info{line-height:1}
+.info .name{font-weight:700;font-size:18px;color:var(--text)}
+.info .acct{font-size:13px;color:var(--muted);margin-top:4px}
+.balance{text-align:right}
+.balance .label{font-size:13px;color:var(--muted)}
+.balance .amount{font-weight:800;font-size:28px;margin-top:6px;color:var(--text)}
+.transactions{margin-top:18px;background:linear-gradient(180deg,#0b1220, #0f1724);border-radius:12px;padding:12px;margin-bottom:20px;box-shadow:0 6px 18px rgba(2,6,23,0.5)}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px 8px;text-align:left;font-size:14px}
+th{color:var(--muted);font-weight:700;font-size:13px}
+tr + tr td{border-top:1px solid rgba(255,255,255,0.03)}
+.merchant{font-weight:700;color:var(--text)}
+.muted{color:var(--muted);font-size:13px}
+.amount-cred{color:var(--success);font-weight:700}
+.amount-deb{color:var(--danger);font-weight:700}
+footer{margin-top:18px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.small{font-size:12px;color:var(--muted)}
+@media (max-width:640px){
+  .account-card{flex-direction:column;align-items:flex-start;gap:12px}
+  .balance{text-align:left}
+}
+a{color:var(--accent); text-decoration:none}
 
-window.addEventListener("DOMContentLoaded", () => {
-  const name = "Aleksandra Florek";
-  const balanceFixed = 15323.35;
-  const acctMask = "PL-" + Math.floor(1000+Math.random()*9000) + "-" + Math.floor(1000+Math.random()*9000) + "-" + Math.floor(1000+Math.random()*9000);
+/* powiadomienie (toast) */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--card);
+  color: var(--text);
+  border-left: 4px solid var(--success);
+  padding: 14px 18px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: slideIn 0.5s forwards;
+  z-index: 9999;
+}
+@keyframes slideIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <span class="badge">Silesia Finansy (VIP)</span>
 
-  function zlToGrosze(zl){ return Math.round(Number(zl)*100); }
-  function groszeToStr(grosze){
-    const sign = grosze < 0 ? '-' : '';
-    const abs = Math.abs(grosze);
-    const zl = Math.floor(abs / 100);
-    const cents = String(abs % 100).padStart(2,'0');
-    return sign + zl.toLocaleString('pl-PL') + '.' + cents + ' PLN';
+    <div class="account-card" role="region" aria-label="Panel konta biznes">
+      <div class="left">
+        <div class="avatar" id="avatar" title="Profil (ikona)">
+          <svg viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="9" opacity="0.12"/>
+            <path d="M12 7c1.657 0 3 .895 3 2s-1.343 2-3 2-3 .895-3 2 1.343 2 3 2" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <path d="M12 5v2M12 17v2" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="9" fill="none" stroke="#ffffff" opacity="0.08"/>
+          </svg>
+        </div>
+        <div class="info">
+          <div class="name" id="acctName">—</div>
+          <div class="acct" id="acctNum">Nr konta: —</div>
+          <div class="small">Typ konta: Oszczędnościowe (VIP)</div>
+        </div>
+      </div>
+
+      <div class="balance">
+        <div class="label">Saldo oszczędnościowe</div>
+        <div class="amount" id="balance">—</div>
+      </div>
+    </div>
+
+    <div class="transactions" aria-label="Ostatnie transakcje">
+      <table>
+        <thead>
+          <tr><th>Data</th><th>Opis</th><th class="muted">Strona / odbiorca</th><th style="text-align:right">Kwota</th></tr>
+        </thead>
+        <tbody id="txBody"></tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td style="font-weight:700">Suma ostatnich transakcji</td>
+            <td></td>
+            <td style="text-align:right;font-weight:700;color:var(--danger)" id="sumFoot">-0.00 PLN</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="small">Twoje dane są chronione.</div>
+      <div style="font-size:12px;color:var(--muted)">Odświeżono: <span id="createdDate"></span></div>
+    </div>
+  </div>
+
+  <div id="toastContainer"></div>
+
+  <script>
+  function showToast(msg){
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.textContent = msg;
+    document.getElementById("toastContainer").appendChild(toast);
+    setTimeout(()=>toast.remove(),4000);
   }
 
-  const transactions = [
-    { date: "05.11.2025", desc: "Przelew wewnętrzny — listopad 2025", site: "zlecenie", amountG: zlToGrosze(2100.00) },
-    { date: "08.10.2025", desc: "Wpłata we wpłatomacie (kod BLIK BSND)", site: "wplatomat", amountG: zlToGrosze(5200.00) },
-    { date: "08.10.2025", desc: "Wpłata we wpłatomacie (kod BLIK BSND)", site: "wplatomat", amountG: zlToGrosze(5000.00) },
-    { date: "01.09.2025", desc: "Przelew wewnętrzny — przychodzący", site: "Twoje konto", amountG: zlToGrosze(2300.00) },
-    { date: "01.01.2024", desc: "Przelew wewnętrzny — przychodzący", site: "Twoje konto", amountG: zlToGrosze(7600.00) },
-    { date: "04.05.2025", desc: "Jeulia JEWELLERY LIMITED", site: "jeulia.com", amountG: zlToGrosze(-640.00) },
-    { date: "12.04.2025", desc: "Sklep Odzieżowy", site: "greenpoint.pl", amountG: zlToGrosze(-259.99) },
-    { date: "19.03.2025", desc: "Buty - Sklep Obuwniczy", site: "jdsports.pl", amountG: zlToGrosze(-499.00) },
-    { date: "12.03.2025", desc: "Sklep Elektroniczny", site: "euro.com", amountG: zlToGrosze(-720.50) },
-    { date: "14.08.2024", desc: "DINO BORZECHOW 1 K.1", site: "brak", amountG: zlToGrosze(-189.25) },
-    { date: "27.12.2024", desc: "OLX", site: "olx.pl", amountG: zlToGrosze(-450.00) },
-    { date: "21.05.2025", desc: "ORLEN STACJA NR.432", site: "blik", amountG: zlToGrosze(-243.00) },
-    { date: "11.12.2024", desc: "ISPOT", site: "ispot.pl", amountG: zlToGrosze(-890.99) }
-  ];
+  window.addEventListener("DOMContentLoaded", () => {
+    const name = "Aleksandra Florek";
+    const balanceFixed = 15323.35;
+    const acctMask = "PL-" + Math.floor(1000+Math.random()*9000) + "-" + Math.floor(1000+Math.random()*9000) + "-" + Math.floor(1000+Math.random()*9000);
 
-  document.getElementById("acctName").textContent = name;
-  document.getElementById("acctNum").textContent = "Nr konta: " + acctMask;
-  document.getElementById("balance").textContent = balanceFixed.toFixed(2) + " PLN";
-  document.getElementById("createdDate").textContent = new Date().toLocaleString("pl-PL");
-
-  const txBody = document.getElementById("txBody");
-  let sumG = 0;
-  transactions.forEach(tx => {
-    if (tx.amountG < 0) sumG += tx.amountG;
-    const tr = document.createElement("tr");
-    const amtClass = tx.amountG < 0 ? "amount-deb" : "amount-cred";
-    const siteHtml = (tx.site && tx.site !== "brak") ? `<a href="https://${tx.site}" target="_blank" rel="noopener">${tx.site}</a>` : "—";
-    tr.innerHTML = `<td>${tx.date}</td><td class="merchant">${tx.desc}</td><td class="muted">${siteHtml}</td><td style="text-align:right"><span class="${amtClass}">${groszeToStr(tx.amountG)}</span></td>`;
-    txBody.appendChild(tr);
-  });
-  document.getElementById("sumFoot").textContent = groszeToStr(sumG);
-
-  showToast(`Nowa wpłata: +${groszeToStr(transactions[0].amountG)} (${transactions[0].desc})`);
-});
-</script>
+    function zlToGrosze(zl){ return Math.round(Number(zl)*100); }
+    function groszeToStr(grosze){
+      const sign = grosze < 0 ? '-' : '';
+      const abs = Math.abs(grosze);
+      const zl = Math.floor(abs / 100);
+      const cents = Str
