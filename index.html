@@ -143,4 +143,45 @@ a{color:var(--accent); text-decoration:none}
       const sign = grosze < 0 ? '-' : '';
       const abs = Math.abs(grosze);
       const zl = Math.floor(abs / 100);
-      const cents = Str
+      const cents = String(abs % 100).padStart(2,'0');
+      return sign + zl.toLocaleString('pl-PL') + '.' + cents + ' PLN';
+    }
+
+    const transactions = [
+      { date: "05.11.2025", desc: "Przelew wewnętrzny — listopad 2025", site: "zlecenie", amountG: zlToGrosze(2100.00) },
+      { date: "08.10.2025", desc: "Wpłata we wpłatomacie (kod BLIK BSND)", site: "wplatomat", amountG: zlToGrosze(5200.00) },
+      { date: "08.10.2025", desc: "Wpłata we wpłatomacie (kod BLIK BSND)", site: "wplatomat", amountG: zlToGrosze(5000.00) },
+      { date: "01.09.2025", desc: "Przelew wewnętrzny — przychodzący", site: "Twoje konto", amountG: zlToGrosze(2300.00) },
+      { date: "01.01.2024", desc: "Przelew wewnętrzny — przychodzący", site: "Twoje konto", amountG: zlToGrosze(7600.00) },
+      { date: "04.05.2025", desc: "Jeulia JEWELLERY LIMITED", site: "jeulia.com", amountG: zlToGrosze(-640.00) },
+      { date: "12.04.2025", desc: "Sklep Odzieżowy", site: "greenpoint.pl", amountG: zlToGrosze(-259.99) },
+      { date: "19.03.2025", desc: "Buty - Sklep Obuwniczy", site: "jdsports.pl", amountG: zlToGrosze(-499.00) },
+      { date: "12.03.2025", desc: "Sklep Elektroniczny", site: "euro.com", amountG: zlToGrosze(-720.50) },
+      { date: "14.08.2024", desc: "DINO BORZECHOW 1 K.1", site: "brak", amountG: zlToGrosze(-189.25) },
+      { date: "27.12.2024", desc: "OLX", site: "olx.pl", amountG: zlToGrosze(-450.00) },
+      { date: "21.05.2025", desc: "ORLEN STACJA NR.432", site: "blik", amountG: zlToGrosze(-243.00) },
+      { date: "11.12.2024", desc: "ISPOT", site: "ispot.pl", amountG: zlToGrosze(-890.99) }
+    ];
+
+    document.getElementById("acctName").textContent = name;
+    document.getElementById("acctNum").textContent = "Nr konta: " + acctMask;
+    document.getElementById("balance").textContent = balanceFixed.toFixed(2) + " PLN";
+    document.getElementById("createdDate").textContent = new Date().toLocaleString("pl-PL");
+
+    const txBody = document.getElementById("txBody");
+    let sumG = 0;
+    transactions.forEach(tx => {
+      if (tx.amountG < 0) sumG += tx.amountG;
+      const tr = document.createElement("tr");
+      const amtClass = tx.amountG < 0 ? "amount-deb" : "amount-cred";
+      const siteHtml = (tx.site && tx.site !== "brak") ? `<a href="https://${tx.site}" target="_blank" rel="noopener">${tx.site}</a>` : "—";
+      tr.innerHTML = `<td>${tx.date}</td><td class="merchant">${tx.desc}</td><td class="muted">${siteHtml}</td><td style="text-align:right"><span class="${amtClass}">${groszeToStr(tx.amountG)}</span></td>`;
+      txBody.appendChild(tr);
+    });
+    document.getElementById("sumFoot").textContent = groszeToStr(sumG);
+
+    showToast(`Nowa wpłata: +${groszeToStr(transactions[0].amountG)} (${transactions[0].desc})`);
+  });
+  </script>
+</body>
+</html>
